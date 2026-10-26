@@ -5,11 +5,6 @@ stages:
   - test
   - package
 
-before_script:
-  - export PROJECT_DIR=$(dirname $(find . -name "pom.xml" | head -n 1))
-  - cd $PROJECT_DIR
-  - echo "Building in directory: $(pwd)"
-
 compile_job:
   stage: build
   script:
@@ -26,5 +21,5 @@ package_job:
     - mvn package -DskipTests
   artifacts:
     paths:
-      - $PROJECT_DIR/target/*.jar
+      - target/*.jar
     expire_in: 1 week
