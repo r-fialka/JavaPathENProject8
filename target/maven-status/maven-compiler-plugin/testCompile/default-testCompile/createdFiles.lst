@@ -1,0 +1,9 @@
+com\openclassrooms\tourguide\PerformanceTest.class
+com\openclassrooms\tourguide\model\UserTest.class
+com\openclassrooms\tourguide\service\RewardsServiceTest.class
+com\openclassrooms\tourguide\model\dto\NearByAttractionDtoTest.class
+com\openclassrooms\tourguide\model\UserPreferencesTest.class
+com\openclassrooms\tourguide\model\UserRewardTest.class
+com\openclassrooms\tourguide\service\TourGuideServiceTest.class
+com\openclassrooms\tourguide\TourguideApplicationTest.class
+com\openclassrooms\tourguide\controller\TourGuideControllerIT.class

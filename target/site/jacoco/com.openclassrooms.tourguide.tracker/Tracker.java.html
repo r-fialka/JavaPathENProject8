@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tracker.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tourguide</a> &gt; <a href="index.source.html" class="el_package">com.openclassrooms.tourguide.tracker</a> &gt; <span class="el_source">Tracker.java</span></div><h1>Tracker.java</h1><pre class="source lang-java linenums">package com.openclassrooms.tourguide.tracker;
+
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.commons.lang3.time.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.openclassrooms.tourguide.service.TourGuideService;
+import com.openclassrooms.tourguide.model.User;
+
+public class Tracker extends Thread {
+<span class="fc" id="L17">	private Logger logger = LoggerFactory.getLogger(Tracker.class);</span>
+<span class="fc" id="L18">	private static final long TRACKING_POLLING_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(5);</span>
+
+<span class="fc" id="L20">	private final ExecutorService executorService = Executors.newSingleThreadExecutor();</span>
+	private final TourGuideService tourGuideService;
+<span class="fc" id="L22">	private final AtomicBoolean stop = new AtomicBoolean(false);</span>
+
+<span class="fc" id="L24">	public Tracker(TourGuideService tourGuideService) {</span>
+<span class="fc" id="L25">		this.tourGuideService = tourGuideService;</span>
+<span class="fc" id="L26">		executorService.submit(this);</span>
+<span class="fc" id="L27">	}</span>
+
+	public void stopTracking() {
+<span class="fc" id="L30">		stop.set(true);</span>
+<span class="fc" id="L31">		executorService.shutdownNow();</span>
+<span class="fc" id="L32">	}</span>
+
+	@Override
+	public void run() {
+<span class="fc" id="L36">		StopWatch stopWatch = new StopWatch();</span>
+<span class="pc bpc" id="L37" title="1 of 4 branches missed.">		while (!stop.get() &amp;&amp; !Thread.currentThread().isInterrupted()) {</span>
+<span class="fc" id="L38">			List&lt;User&gt; users = tourGuideService.getAllUsers();</span>
+<span class="fc" id="L39">			logger.debug(&quot;Begin Tracker. Tracking &quot; + users.size() + &quot; users.&quot;);</span>
+<span class="fc" id="L40">			stopWatch.start();</span>
+
+			// Параллелизм инкапсулирован внутри TourGuideService.trackAllUsers
+<span class="fc" id="L43">			tourGuideService.trackAllUsers(users);</span>
+
+<span class="fc" id="L45">			stopWatch.stop();</span>
+<span class="fc" id="L46">			logger.debug(&quot;Tracker Time Elapsed: &quot; + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + &quot; seconds.&quot;);</span>
+<span class="fc" id="L47">			stopWatch.reset();</span>
+			try {
+<span class="fc" id="L49">				logger.debug(&quot;Tracker sleeping&quot;);</span>
+<span class="fc" id="L50">				TimeUnit.SECONDS.sleep(TRACKING_POLLING_INTERVAL_SECONDS);</span>
+<span class="fc" id="L51">			} catch (InterruptedException e) {</span>
+<span class="fc" id="L52">				Thread.currentThread().interrupt();</span>
+<span class="fc" id="L53">				break;</span>
+<span class="fc" id="L54">			}</span>
+<span class="fc" id="L55">		}</span>
+<span class="fc" id="L56">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

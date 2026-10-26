@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NearByAttractionDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tourguide</a> &gt; <a href="index.source.html" class="el_package">com.openclassrooms.tourguide.model.dto</a> &gt; <span class="el_source">NearByAttractionDto.java</span></div><h1>NearByAttractionDto.java</h1><pre class="source lang-java linenums">package com.openclassrooms.tourguide.model.dto;
+
+public class NearByAttractionDto {
+
+    public String attractionName;
+    public double attractionLatitude;
+    public double attractionLongitude;
+    public double userLatitude;
+    public double userLongitude;
+    public double distanceInMiles;
+    public int rewardPoints;
+
+<span class="fc" id="L13">    public NearByAttractionDto() {</span>
+<span class="fc" id="L14">    }</span>
+
+    public NearByAttractionDto(String attractionName,
+                               double attractionLatitude, double attractionLongitude,
+                               double userLatitude, double userLongitude,
+<span class="fc" id="L19">                               double distanceInMiles, int rewardPoints) {</span>
+<span class="fc" id="L20">        this.attractionName = attractionName;</span>
+<span class="fc" id="L21">        this.attractionLatitude = attractionLatitude;</span>
+<span class="fc" id="L22">        this.attractionLongitude = attractionLongitude;</span>
+<span class="fc" id="L23">        this.userLatitude = userLatitude;</span>
+<span class="fc" id="L24">        this.userLongitude = userLongitude;</span>
+<span class="fc" id="L25">        this.distanceInMiles = distanceInMiles;</span>
+<span class="fc" id="L26">        this.rewardPoints = rewardPoints;</span>
+<span class="fc" id="L27">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
