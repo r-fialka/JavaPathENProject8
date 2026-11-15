@@ -1,8 +1,6 @@
 package com.openclassrooms.tourguide.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Date;
 import java.util.UUID;
@@ -12,6 +10,10 @@ import org.junit.jupiter.api.Test;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 
+/**
+ * Unit tests for {@link UserReward}.
+ * Verifies constructors and reward points management.
+ */
 public class UserRewardTest {
 
     @Test
@@ -37,7 +39,7 @@ public class UserRewardTest {
 
         assertEquals(visitedLocation, reward.visitedLocation);
         assertEquals(attraction, reward.attraction);
-        assertEquals(0, reward.getRewardPoints()); // По умолчанию 0
+        assertEquals(0, reward.getRewardPoints()); // Reward points default to 0.
     }
 
     @Test

@@ -15,6 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.openclassrooms.tourguide.helper.InternalTestHelper;
 
+/**
+ * Integration tests for the TourGuideController.
+ * Verifies that the REST API endpoints return the expected status codes and JSON structures.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -25,7 +29,7 @@ public class TourGuideControllerIT {
 
     @BeforeEach
     public void setUp() {
-        // Создаем 1 тестового пользователя, чтобы не нагружать систему 100 000
+        // Create a single test user to avoid overloading the system with 100,000 users.
         InternalTestHelper.setInternalUserNumber(1);
     }
 
@@ -50,7 +54,7 @@ public class TourGuideControllerIT {
         mockMvc.perform(get("/getNearbyAttractions")
                         .param("userName", "internalUser0"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(5)) // Проверяем, что вернулось ровно 5
+                .andExpect(jsonPath("$.length()").value(5)) // Verify that exactly 5 results are returned.
                 .andExpect(jsonPath("$[0].attractionName").exists())
                 .andExpect(jsonPath("$[0].distanceInMiles").exists());
     }

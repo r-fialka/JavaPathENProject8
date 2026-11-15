@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Unit tests for {@link UserPreferences}.
+ * Verifies default values and that setters/getters work correctly.
+ */
 public class UserPreferencesTest {
 
     @Test

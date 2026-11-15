@@ -14,6 +14,10 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 
+/**
+ * Unit tests for {@link User}.
+ * Verifies initialization, visited locations management, and reward uniqueness.
+ */
 public class UserTest {
 
     @Test
@@ -41,7 +45,7 @@ public class UserTest {
 
         user.clearVisitedLocations();
         assertTrue(user.getVisitedLocations().isEmpty());
-        assertNull(user.getLastVisitedLocation()); // Проверка защиты от пустого списка
+        assertNull(user.getLastVisitedLocation()); // Verify handling of an empty list.
     }
 
     @Test
@@ -66,7 +70,7 @@ public class UserTest {
         UserReward reward2 = new UserReward(location, attraction, 200);
 
         user.addUserReward(reward1);
-        user.addUserReward(reward2); // Должен игнорироваться, так как аттракцион уже есть
+        user.addUserReward(reward2); // Should be ignored because the attraction already exists.
 
         assertEquals(1, user.getUserRewards().size());
     }

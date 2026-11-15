@@ -18,6 +18,10 @@ import com.openclassrooms.tourguide.model.dto.NearByAttractionDto;
 import com.openclassrooms.tourguide.model.User;
 import tripPricer.Provider;
 
+/**
+ * Unit tests for {@link TourGuideService}.
+ * Covers user management, location tracking, and attraction recommendations.
+ */
 public class TourGuideServiceTest {
 
 	@Test
@@ -27,19 +31,19 @@ public class TourGuideServiceTest {
 		InternalTestHelper.setInternalUserNumber(0);
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
-		// Новый пользователь без локаций
+		// New user with no locations.
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.getUserLocation(user);
 
 		tourGuideService.tracker.stopTracking();
-		assertTrue(visitedLocation.userId.equals(user.getUserId()));
+		assertEquals(visitedLocation.userId, user.getUserId());
 	}
 
 	@Test
 	public void getUserLocation_ExistingUser_ReturnsLastLocation() {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(1); // Создаст пользователя с 3 локациями
+		InternalTestHelper.setInternalUserNumber(1); // Creates one user with three locations.
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
 		User user = tourGuideService.getAllUsers().get(0);
@@ -59,9 +63,9 @@ public class TourGuideServiceTest {
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 
-		// 1. Добавляем нового (покрывает if)
+		// Add a new user.
 		tourGuideService.addUser(user);
-		// 2. Добавляем его же (покрывает else)
+		// Attempt to add the same user again.
 		tourGuideService.addUser(user);
 
 		User retrieved = tourGuideService.getUser("jon");

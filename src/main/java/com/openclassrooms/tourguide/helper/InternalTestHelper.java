@@ -2,8 +2,8 @@ package com.openclassrooms.tourguide.helper;
 
 public class InternalTestHelper {
 
-	// Set this default up to 100,000 for testing
-	private static volatile int internalUserNumber = 100;
+	// Default number of internal test users (100,000).
+	private static volatile int internalUserNumber = 100_000;
 
 	public static void setInternalUserNumber(int internalUserNumber) {
 		InternalTestHelper.internalUserNumber = internalUserNumber;

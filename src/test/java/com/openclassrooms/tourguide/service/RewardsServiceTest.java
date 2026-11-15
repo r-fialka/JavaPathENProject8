@@ -1,3 +1,4 @@
+
 package com.openclassrooms.tourguide.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +35,8 @@ public class RewardsServiceTest {
 		tourGuideService.trackUserLocation(user);
 		List<UserReward> userRewards = user.getUserRewards();
 		tourGuideService.tracker.stopTracking();
-		assertTrue(userRewards.size() == 1);
+
+		assertEquals(1, userRewards.size());
 	}
 
 	@Test
@@ -42,6 +44,7 @@ public class RewardsServiceTest {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		Attraction attraction = gpsUtil.getAttractions().get(0);
+
 		assertTrue(rewardsService.isWithinAttractionProximity(attraction, attraction));
 	}
 
@@ -62,51 +65,67 @@ public class RewardsServiceTest {
 	}
 
 	/**
-	 * Покрывает метод setDefaultProximityBuffer()
+	 * Covers the setDefaultProximityBuffer() method.
 	 */
 	@Test
 	public void setDefaultProximityBufferTest() {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
-		// Меняем буфер
+		// Set a smaller proximity buffer.
 		rewardsService.setProximityBuffer(5);
 
-		// Возвращаем дефолтный
+		// Restore the default proximity buffer (10 miles).
 		rewardsService.setDefaultProximityBuffer();
 
-		// Проверяем, что логика работает (расстояние 0 меньше 10)
-		Location loc = new Location(0, 0);
-		assertTrue(rewardsService.getDistance(loc, loc) <= 10);
+		Attraction attraction = gpsUtil.getAttractions().get(0);
+
+		// Place the user approximately 7 miles away from the attraction.
+		Location location = new Location(attraction.latitude + 0.1, attraction.longitude);
+
+		double distance = rewardsService.getDistance(attraction, location);
+
+		// Ensure the test location is outside the 5-mile buffer but within 10 miles.
+		assertTrue(distance > 5 && distance <= 10);
+
+		User user = new User(UUID.randomUUID(), "testUser", "000", "test@test.com");
+		user.addToVisitedLocations(
+				new VisitedLocation(user.getUserId(), location, new Date()));
+
+		rewardsService.calculateRewards(user);
+
+		// Verify that the attraction is rewarded after restoring the default buffer.
+		assertTrue(user.getUserRewards().stream()
+				.anyMatch(reward -> reward.attraction.attractionName.equals(attraction.attractionName)));
 	}
 
 	/**
-	 * Покрывает метод shutdownRewardsPool()
+	 * Covers the shutdownRewardsPool() method.
 	 */
 	@Test
 	public void shutdownRewardsPoolTest() {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
-		// Просто вызываем метод, чтобы JaCoCo зафиксировал его выполнение
+		// Simply call the method to ensure JaCoCo records its execution.
 		rewardsService.shutdownRewardsPool();
 	}
 
 	/**
-	 * Покрывает ветку с NaN в getDistance (защита от погрешности Math.acos)
+	 * Covers the NaN branch in getDistance (protection against Math.acos floating-point precision errors).
 	 */
 	@Test
 	public void getDistance_NaN_ReturnsZero() {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
-		// Координаты, которые могут вызвать погрешность Math.acos
+		// Coordinates that may cause Math.acos floating-point precision errors.
 		Location loc1 = new Location(90, 0);
 		Location loc2 = new Location(-90, 180);
 
 		double distance = rewardsService.getDistance(loc1, loc2);
 
-		// Если бы не было защиты от NaN, distance был бы NaN
+		// Without the NaN safeguard, the distance would be NaN.
 		assertTrue(distance >= 0);
 	}
 }

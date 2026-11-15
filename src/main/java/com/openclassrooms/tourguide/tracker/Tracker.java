@@ -13,9 +13,17 @@ import org.slf4j.LoggerFactory;
 import com.openclassrooms.tourguide.service.TourGuideService;
 import com.openclassrooms.tourguide.model.User;
 
+/**
+ * Background thread responsible for periodically tracking the locations
+ * of all users. It runs every 5 minutes and delegates the parallel
+ * processing to the TourGuideService.
+ */
 public class Tracker extends Thread {
 	private Logger logger = LoggerFactory.getLogger(Tracker.class);
-	private static final long TRACKING_POLLING_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(5);
+
+	// Interval between user location tracking cycles (5 minutes).
+	private static final long TRACKING_POLLING_INTERVAL_SECONDS =
+			TimeUnit.MINUTES.toSeconds(5);
 
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	private final TourGuideService tourGuideService;
@@ -26,6 +34,9 @@ public class Tracker extends Thread {
 		executorService.submit(this);
 	}
 
+	/**
+	 * Stops the tracking process and shuts down the executor service.
+	 */
 	public void stopTracking() {
 		stop.set(true);
 		executorService.shutdownNow();
@@ -39,7 +50,7 @@ public class Tracker extends Thread {
 			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
 			stopWatch.start();
 
-			// Параллелизм инкапсулирован внутри TourGuideService.trackAllUsers
+			// Parallel processing is handled internally by TourGuideService.trackAllUsers().
 			tourGuideService.trackAllUsers(users);
 
 			stopWatch.stop();

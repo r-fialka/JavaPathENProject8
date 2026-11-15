@@ -35,6 +35,10 @@ import gpsUtil.location.VisitedLocation;
 import tripPricer.Provider;
 import tripPricer.TripPricer;
 
+/**
+ * Main service for the TourGuide application.
+ * Manages users, tracks their locations, and coordinates with external services.
+ */
 @Service
 public class TourGuideService {
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
@@ -44,7 +48,7 @@ public class TourGuideService {
 	public final Tracker tracker;
 	boolean testMode = true;
 
-	// Пул потоков для параллельной обработки пользователей (внутри сервиса, не в тестах)
+	// Thread pool for parallel location tracking (inside the service, not in tests).
 	private static final int THREAD_POOL_SIZE = 200;
 	private final ExecutorService trackingPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
@@ -59,7 +63,10 @@ public class TourGuideService {
 			logger.debug("Initializing users");
 			initializeInternalUsers();
 			logger.debug("Finished initializing users");
+		} else {
+			logger.info("Production mode enabled");
 		}
+
 		tracker = new Tracker(this);
 		addShutDownHook();
 	}
@@ -68,6 +75,12 @@ public class TourGuideService {
 		return user.getUserRewards();
 	}
 
+	/**
+	 * Returns the user's last known location, or tracks a new one if none exists.
+	 *
+	 * @param user The user.
+	 * @return The visited location.
+	 */
 	public VisitedLocation getUserLocation(User user) {
 		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
 				: trackUserLocation(user);
@@ -85,6 +98,8 @@ public class TourGuideService {
 	public void addUser(User user) {
 		if (!internalUserMap.containsKey(user.getUserName())) {
 			internalUserMap.put(user.getUserName(), user);
+		} else {
+			logger.debug("User " + user.getUserName() + " already exists");
 		}
 	}
 
@@ -98,8 +113,8 @@ public class TourGuideService {
 	}
 
 	/**
-	 * Отслеживает текущую локацию пользователя и начисляет награды.
-	 * Потокобезопасен благодаря CopyOnWriteArrayList в User.
+	 * Tracks the user's current location and awards rewards.
+	 * Thread-safe thanks to CopyOnWriteArrayList in User.
 	 */
 	public VisitedLocation trackUserLocation(User user) {
 		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
@@ -109,8 +124,8 @@ public class TourGuideService {
 	}
 
 	/**
-	 * Параллельно отслеживает локации для списка пользователей.
-	 * Многопоточность инкапсулирована внутри сервиса — тесты остаются последовательными.
+	 * Tracks locations for a list of users in parallel.
+	 * Multithreading is encapsulated within the service — tests remain sequential.
 	 */
 	public void trackAllUsers(List<User> users) {
 		List<CompletableFuture<Void>> futures = users.stream()
@@ -120,18 +135,18 @@ public class TourGuideService {
 	}
 
 	/**
-	 * Останавливает пул потоков. Вызывать при завершении приложения.
+	 * Shuts down the thread pool. Call when the application is shutting down.
 	 */
 	public void shutdownTrackingPool() {
 		trackingPool.shutdown();
 	}
 
 	/**
-	 * Возвращает 5 ближайших аттракционов относительно локации пользователя.
-	 * Расстояние считается через RewardsService.getDistance (в милях).
+	 * Returns the 5 attractions closest to the user's location.
+	 * Distance is calculated using RewardsService.getDistance (in miles).
 	 *
-	 * @deprecated используйте {@link #getNearByAttractionsDto(VisitedLocation, User)}
-	 *             для получения полного DTO с координатами и наградой.
+	 * @deprecated Use {@link #getNearByAttractionsDto(VisitedLocation, User)}
+	 *             to retrieve the complete DTO, including coordinates and reward.
 	 */
 	@Deprecated
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
@@ -142,9 +157,9 @@ public class TourGuideService {
 	}
 
 	/**
-	 * Возвращает 5 ближайших аттракционов в виде DTO, содержащего:
-	 * имя аттракциона, координаты аттракциона, координаты пользователя,
-	 * расстояние в милях и награду за посещение.
+	 * Returns the 5 closest attractions as DTOs containing:
+	 * the attraction name, attraction coordinates, user coordinates,
+	 * distance in miles, and reward for visiting.
 	 */
 	public List<NearByAttractionDto> getNearByAttractionsDto(VisitedLocation visitedLocation, User user) {
 		return gpsUtil.getAttractions().stream()
@@ -171,9 +186,7 @@ public class TourGuideService {
 	}
 
 	/**********************************************************************************
-	 *
 	 * Methods Below: For Internal Testing
-	 *
 	 **********************************************************************************/
 	private static final String tripPricerApiKey = "test-server-api-key";
 	private final Map<String, User> internalUserMap = new ConcurrentHashMap<>();

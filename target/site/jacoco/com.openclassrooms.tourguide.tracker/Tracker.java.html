@@ -13,46 +13,57 @@ import org.slf4j.LoggerFactory;
 import com.openclassrooms.tourguide.service.TourGuideService;
 import com.openclassrooms.tourguide.model.User;
 
+/**
+ * Background thread responsible for periodically tracking the locations
+ * of all users. It runs every 5 minutes and delegates the parallel
+ * processing to the TourGuideService.
+ */
 public class Tracker extends Thread {
-<span class="fc" id="L17">	private Logger logger = LoggerFactory.getLogger(Tracker.class);</span>
-<span class="fc" id="L18">	private static final long TRACKING_POLLING_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(5);</span>
+<span class="fc" id="L22">	private Logger logger = LoggerFactory.getLogger(Tracker.class);</span>
 
-<span class="fc" id="L20">	private final ExecutorService executorService = Executors.newSingleThreadExecutor();</span>
+	// Interval between user location tracking cycles (5 minutes).
+<span class="fc" id="L25">	private static final long TRACKING_POLLING_INTERVAL_SECONDS =</span>
+<span class="fc" id="L26">			TimeUnit.MINUTES.toSeconds(5);</span>
+
+<span class="fc" id="L28">	private final ExecutorService executorService = Executors.newSingleThreadExecutor();</span>
 	private final TourGuideService tourGuideService;
-<span class="fc" id="L22">	private final AtomicBoolean stop = new AtomicBoolean(false);</span>
+<span class="fc" id="L30">	private final AtomicBoolean stop = new AtomicBoolean(false);</span>
 
-<span class="fc" id="L24">	public Tracker(TourGuideService tourGuideService) {</span>
-<span class="fc" id="L25">		this.tourGuideService = tourGuideService;</span>
-<span class="fc" id="L26">		executorService.submit(this);</span>
-<span class="fc" id="L27">	}</span>
+<span class="fc" id="L32">	public Tracker(TourGuideService tourGuideService) {</span>
+<span class="fc" id="L33">		this.tourGuideService = tourGuideService;</span>
+<span class="fc" id="L34">		executorService.submit(this);</span>
+<span class="fc" id="L35">	}</span>
 
+	/**
+	 * Stops the tracking process and shuts down the executor service.
+	 */
 	public void stopTracking() {
-<span class="fc" id="L30">		stop.set(true);</span>
-<span class="fc" id="L31">		executorService.shutdownNow();</span>
-<span class="fc" id="L32">	}</span>
+<span class="fc" id="L41">		stop.set(true);</span>
+<span class="fc" id="L42">		executorService.shutdownNow();</span>
+<span class="fc" id="L43">	}</span>
 
 	@Override
 	public void run() {
-<span class="fc" id="L36">		StopWatch stopWatch = new StopWatch();</span>
-<span class="pc bpc" id="L37" title="1 of 4 branches missed.">		while (!stop.get() &amp;&amp; !Thread.currentThread().isInterrupted()) {</span>
-<span class="fc" id="L38">			List&lt;User&gt; users = tourGuideService.getAllUsers();</span>
-<span class="fc" id="L39">			logger.debug(&quot;Begin Tracker. Tracking &quot; + users.size() + &quot; users.&quot;);</span>
-<span class="fc" id="L40">			stopWatch.start();</span>
+<span class="fc" id="L47">		StopWatch stopWatch = new StopWatch();</span>
+<span class="pc bpc" id="L48" title="1 of 4 branches missed.">		while (!stop.get() &amp;&amp; !Thread.currentThread().isInterrupted()) {</span>
+<span class="fc" id="L49">			List&lt;User&gt; users = tourGuideService.getAllUsers();</span>
+<span class="fc" id="L50">			logger.debug(&quot;Begin Tracker. Tracking &quot; + users.size() + &quot; users.&quot;);</span>
+<span class="fc" id="L51">			stopWatch.start();</span>
 
-			// Параллелизм инкапсулирован внутри TourGuideService.trackAllUsers
-<span class="fc" id="L43">			tourGuideService.trackAllUsers(users);</span>
+			// Parallel processing is handled internally by TourGuideService.trackAllUsers().
+<span class="fc" id="L54">			tourGuideService.trackAllUsers(users);</span>
 
-<span class="fc" id="L45">			stopWatch.stop();</span>
-<span class="fc" id="L46">			logger.debug(&quot;Tracker Time Elapsed: &quot; + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + &quot; seconds.&quot;);</span>
-<span class="fc" id="L47">			stopWatch.reset();</span>
+<span class="fc" id="L56">			stopWatch.stop();</span>
+<span class="fc" id="L57">			logger.debug(&quot;Tracker Time Elapsed: &quot; + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + &quot; seconds.&quot;);</span>
+<span class="fc" id="L58">			stopWatch.reset();</span>
 			try {
-<span class="fc" id="L49">				logger.debug(&quot;Tracker sleeping&quot;);</span>
-<span class="fc" id="L50">				TimeUnit.SECONDS.sleep(TRACKING_POLLING_INTERVAL_SECONDS);</span>
-<span class="fc" id="L51">			} catch (InterruptedException e) {</span>
-<span class="fc" id="L52">				Thread.currentThread().interrupt();</span>
-<span class="fc" id="L53">				break;</span>
-<span class="fc" id="L54">			}</span>
-<span class="fc" id="L55">		}</span>
-<span class="fc" id="L56">	}</span>
+<span class="fc" id="L60">				logger.debug(&quot;Tracker sleeping&quot;);</span>
+<span class="fc" id="L61">				TimeUnit.SECONDS.sleep(TRACKING_POLLING_INTERVAL_SECONDS);</span>
+<span class="fc" id="L62">			} catch (InterruptedException e) {</span>
+<span class="fc" id="L63">				Thread.currentThread().interrupt();</span>
+<span class="fc" id="L64">				break;</span>
+<span class="fc" id="L65">			}</span>
+<span class="fc" id="L66">		}</span>
+<span class="fc" id="L67">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Unit tests for {@link NearByAttractionDto}.
+ * Verifies that the constructors correctly initialize the DTO fields.
+ */
 public class NearByAttractionDtoTest {
 
     @Test

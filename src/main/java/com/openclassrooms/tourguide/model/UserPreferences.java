@@ -1,5 +1,10 @@
 package com.openclassrooms.tourguide.model;
 
+/**
+ * Represents the travel preferences of a user.
+ * Stores information such as trip duration, number of adults/children,
+ * and proximity settings.
+ */
 public class UserPreferences {
 
 	private int attractionProximity = Integer.MAX_VALUE;

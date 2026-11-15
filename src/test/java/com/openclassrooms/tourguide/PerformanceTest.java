@@ -18,6 +18,12 @@ import com.openclassrooms.tourguide.service.RewardsService;
 import com.openclassrooms.tourguide.service.TourGuideService;
 import com.openclassrooms.tourguide.model.User;
 
+/**
+ * Performance tests for the TourGuide application.
+ * These tests simulate high user volume (100,000 users) to ensure
+ * the application meets the required performance thresholds.
+ * (Note: This test is excluded from the CI pipeline to save build time).
+ */
 public class PerformanceTest {
 
 	private static final int USER_COUNT = 100_000;
@@ -35,7 +41,7 @@ public class PerformanceTest {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 
-		// Последовательный вызов. Параллелизм — внутри TourGuideService.trackAllUsers.
+		// The method is invoked once; parallel processing is handled internally by TourGuideService.trackAllUsers().
 		tourGuideService.trackAllUsers(allUsers);
 
 		stopWatch.stop();
@@ -62,7 +68,7 @@ public class PerformanceTest {
 		allUsers.forEach(u -> u.addToVisitedLocations(
 				new VisitedLocation(u.getUserId(), attraction, new Date())));
 
-		// Последовательный вызов. Параллелизм — внутри RewardsService.calculateRewardsForAllUsers.
+		// The method is invoked once; parallel processing is handled internally by RewardsService.calculateRewardsForAllUsers().
 		rewardsService.calculateRewardsForAllUsers(allUsers);
 
 		for (User user : allUsers) {

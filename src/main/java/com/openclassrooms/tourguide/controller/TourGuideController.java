@@ -33,9 +33,9 @@ public class TourGuideController {
     }
 
     /**
-     * Возвращает 5 ближайших аттракционов к последней локации пользователя.
-     * Для каждого: имя, координаты аттракциона, координаты пользователя,
-     * расстояние в милях и награда за посещение.
+     * Returns the 5 attractions closest to the user's last known location.
+     * Each DTO includes the attraction name, attraction coordinates,
+     * user coordinates, distance in miles, and reward for visiting.
      */
     @GetMapping("/getNearbyAttractions")
     public List<NearByAttractionDto> getNearbyAttractions(@RequestParam String userName) {

@@ -2,8 +2,8 @@
 
 <span class="nc" id="L3">public class InternalTestHelper {</span>
 
-	// Set this default up to 100,000 for testing
-<span class="fc" id="L6">	private static volatile int internalUserNumber = 100;</span>
+	// Default number of internal test users (100,000).
+<span class="fc" id="L6">	private static volatile int internalUserNumber = 100_000;</span>
 
 	public static void setInternalUserNumber(int internalUserNumber) {
 <span class="fc" id="L9">		InternalTestHelper.internalUserNumber = internalUserNumber;</span>
