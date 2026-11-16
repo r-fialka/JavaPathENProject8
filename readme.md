@@ -1,14 +1,14 @@
 <div align="center">
-  <!-- Логотип -->
+  <!-- Logo -->
   <img src="images/logo.png" alt="TourGuide Logo" width="200"/>
 
   <h1>TourGuide</h1>
 
   <p>
-    <strong>Приложение для управления турами, расчета цен и системы вознаграждений.</strong>
+    <strong>An application for managing tours, price calculation, and rewards system.</strong>
   </p>
 
-  <!-- Бейджи (опционально, можно удалить, если не нужны) -->
+  <!-- Badges (optional, remove if not needed) -->
   <p>
     <img src="https://img.shields.io/badge/Java-17-blue" alt="Java 17"/>
     <img src="https://img.shields.io/badge/Spring_Boot-3.0-green" alt="Spring Boot"/>
@@ -18,41 +18,41 @@
 
 ---
 
-## 📖 О проекте
+## 📖 About the Project
 
-**TourGuide** — это микросервисное приложение, которое помогает пользователям находить интересные места, планировать поездки и получать вознаграждения за активность. Проект демонстрирует использование современных подходов к разработке на Java, включая работу с внешними API и внутренними сервисами.
+**TourGuide** is a microservice-based application that helps users discover interesting places, plan trips, and earn rewards for their activity. The project demonstrates modern Java development practices, including integration with external APIs and internal services.
 
-### Основные возможности:
-*   **GPS Утилиты:** Расчет расстояния и поиск ближайших достопримечательностей (`gpsUtil`).
-*   **Ценообразование:** Динамический расчет стоимости туров (`tripPricer`).
-*   **Система лояльности:** Начисление и отслеживание баллов пользователя (`RewardsCentral`).
+### Key Features:
+*   **GPS Utilities:** Distance calculation and finding nearby attractions (`gpsUtil`).
+*   **Pricing:** Dynamic tour price calculation (`tripPricer`).
+*   **Loyalty System:** Earning and tracking user reward points (`RewardsCentral`).
 
 ---
 
-## 🏗 Архитектура
+## 🏗 Architecture
 
-Приложение построено по принципу многоуровневой архитектуры (Layered Architecture). Ниже представлена диаграмма взаимодействия компонентов:
+The application follows a layered architecture. Below is a diagram showing the interaction between components:
 
-<!-- UML Диаграмма -->
+<!-- UML Diagram -->
 ![UML Architecture Diagram](images/uml-diagram.png)
 
-### Слои приложения:
-1.  **Couche présentation (Presentation Layer):** `TourGuideController` — обрабатывает входящие HTTP-запросы.
-2.  **Couche métier (Business Layer):** `TourGuideService` и `RewardsService` — содержат основную логику приложения.
-3.  **Services externes (External Services):** Внешние библиотеки/сервисы (`gpsUtil`, `RewardsCentral`, `tripPricer`), которые используются для получения данных.
+### Application Layers:
+1.  **Presentation Layer:** `TourGuideController` — handles incoming HTTP requests.
+2.  **Business Layer:** `TourGuideService` and `RewardsService` — contain the core application logic.
+3.  **External Services:** External libraries/services (`gpsUtil`, `RewardsCentral`, `tripPricer`) used for data retrieval.
 
 ---
 
-## 🚀 Запуск проекта
+## 🚀 Getting Started
 
-### Требования
-*   JDK 17 или выше
+### Prerequisites
+*   JDK 17 or higher
 *   Maven 3.8+
 *   Git
 
-### Инструкция по установке
+### Installation
 
-1.  **Клонируйте репозиторий:**
+1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/ваш-логин/TourGuide.git
-    cd TourGuide
+    git clone https://github.com/r-fialka/JavaPathENProject8.git
+    cd JavaPathENProject8
