@@ -2,8 +2,6 @@
   <!-- Logo -->
   <img src="images/logo.png" alt="TourGuide Logo" width="200"/>
 
-  <h1>TourGuide</h1>
-
   <p>
     <strong>An application for managing tours, price calculation, and rewards system.</strong>
   </p>
@@ -62,7 +60,7 @@ The initial application suffered from severe performance issues due to sequentia
 1.  **Thread Safety:** Replaced `ArrayList` and `HashMap` with `CopyOnWriteArrayList` and `ConcurrentHashMap` to fix `ConcurrentModificationException` (flaky tests).
 2.  **Parallel Processing:** Used `CompletableFuture` and a fixed `ExecutorService` thread pool (200 threads) to parallelize calls to slow external services (`gpsUtil` and `RewardsCentral`).
     *   *Why 200 threads?* External services use `Thread.sleep()` to simulate network latency. Threads do not consume CPU while waiting. A large pool masks this latency without overloading the processor.
-3.  **Performance Results:** Processing time for 100,000 users was reduced from **several hours** to just **~3.6 minutes** for location tracking and **~4.3 minutes** for reward calculation, comfortably meeting the business requirements.
+3.  **Performance Results:** Processing time for 100,000 users was reduced from **several hours** to just **~10,1 minutes** for location tracking and **~7.3 minutes** for reward calculation, comfortably meeting the business requirements.
 
 ---
 
