@@ -20,39 +20,64 @@
 
 ## 📖 About the Project
 
-**TourGuide** is a microservice-based application that helps users discover interesting places, plan trips, and earn rewards for their activity. The project demonstrates modern Java development practices, including integration with external APIs and internal services.
+**TourGuide** is a Spring Boot REST API designed to help users plan their trips. The application provides recommendations for nearby tourist attractions, calculates reward points for visited locations, and offers travel deals based on accumulated points.
 
-### Key Features:
-*   **GPS Utilities:** Distance calculation and finding nearby attractions (`gpsUtil`).
-*   **Pricing:** Dynamic tour price calculation (`tripPricer`).
-*   **Loyalty System:** Earning and tracking user reward points (`RewardsCentral`).
+This project is part of the **OpenClassrooms Java Developer path (Project 8)**. The main goal was to refactor and optimize a legacy application to handle a rapidly growing user base (up to 100,000 users per day), fix concurrency bugs, implement a new recommendation feature, and set up a CI/CD pipeline.
+
+## ✨ Features
+
+### 📍 Location & Attractions
+*   Tracks user locations via an external `gpsUtil` service.
+*   Returns the **5 closest tourist attractions** based on the user's last known location, regardless of distance (using a custom DTO).
+*   Provides distance in miles and potential reward points for each attraction.
+
+### 🏆 Rewards System
+*   Calculates reward points for users based on their visited locations.
+*   Ensures thread-safe reward calculation using `CopyOnWriteArrayList` and synchronization to avoid duplicates.
+
+### ✈️ Trip Deals
+*   Generates personalized trip deals (hotels, tickets) based on the user's accumulated reward points via `tripPricer`.
 
 ---
 
 ## 🏗 Architecture
 
-The application follows a layered architecture. Below is a diagram showing the interaction between components:
+The application follows a classic layered Spring Boot architecture, as represented in the provided UML diagram:
 
 <!-- UML Diagram -->
 ![UML Architecture Diagram](images/uml-diagram.png)
 
-### Application Layers:
-1.  **Presentation Layer:** `TourGuideController` — handles incoming HTTP requests.
-2.  **Business Layer:** `TourGuideService` and `RewardsService` — contain the core application logic.
-3.  **External Services:** External libraries/services (`gpsUtil`, `RewardsCentral`, `tripPricer`) used for data retrieval.
+### The main application layers are:
+1.  **Controller** — Handles HTTP requests and exposes REST endpoints.
+2.  **Services** — Contains business logic (`TourGuideService`) and reward calculation (`RewardsService`).
+3.  **Models & DTOs** — Internal entities (`User`, `UserReward`) and Data Transfer Objects (`NearByAttractionDto`).
 
 ---
 
-## 🚀 Getting Started
+## ⚡ Performance & Concurrency
 
-### Prerequisites
-*   JDK 17 or higher
-*   Maven 3.8+
-*   Git
+The initial application suffered from severe performance issues due to sequential processing and non-thread-safe collections.
 
-### Installation
+**Optimizations implemented:**
+1.  **Thread Safety:** Replaced `ArrayList` and `HashMap` with `CopyOnWriteArrayList` and `ConcurrentHashMap` to fix `ConcurrentModificationException` (flaky tests).
+2.  **Parallel Processing:** Used `CompletableFuture` and a fixed `ExecutorService` thread pool (200 threads) to parallelize calls to slow external services (`gpsUtil` and `RewardsCentral`).
+    *   *Why 200 threads?* External services use `Thread.sleep()` to simulate network latency. Threads do not consume CPU while waiting. A large pool masks this latency without overloading the processor.
+3.  **Performance Results:** Processing time for 100,000 users was reduced from **several hours** to just **~3.6 minutes** for location tracking and **~4.3 minutes** for reward calculation, comfortably meeting the business requirements.
 
-1.  **Clone the repository:**
+---
+
+## 🚀 Installation
+
+### Requirements
+
+*   Java 21
+*   Maven
+
+### 1. Install local dependencies
+
+Because `gpsUtil`, `RewardCentral`, and `TripPricer` are local JAR files (located in the `/libs` folder), they must be installed into your local Maven repository before building the project. Run these commands in the project root:
+
     ```bash
-    git clone https://github.com/r-fialka/JavaPathENProject8.git
-    cd JavaPathENProject8
+    mvn install:install-file -Dfile=libs/gpsUtil.jar -DgroupId=gpsUtil -DartifactId=gpsUtil -Dversion=1.0.0 -Dpackaging=jar
+    mvn install:install-file -Dfile=libs/RewardCentral.jar -DgroupId=rewardCentral -DartifactId=rewardCentral -Dversion=1.0.0 -Dpackaging=jar
+    mvn install:install-file -Dfile=libs/TripPricer.jar -DgroupId=tripPricer -DartifactId=tripPricer -Dversion=1.0.0 -Dpackaging=jar
